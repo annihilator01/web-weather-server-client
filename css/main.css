@@ -1,0 +1,421 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap'); /* font for city and weather info*/
+@import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap'); /* font for button math symbols */
+
+.no-select {
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Old versions of Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+}
+
+.body {
+    display: flex;
+    justify-content: center;
+    padding: 20px 25px;
+}
+
+@media (min-width: 768px) {
+    .body {
+        padding: 30px 75px;
+    }
+}
+
+.main {
+    width: 100%;
+    max-width: 500px;
+    display: grid;
+    grid-row-gap: 30px;
+    font-size: 13px;
+}
+
+@media (min-width: 768px) {
+    .main {
+        max-width: 900px;
+        grid-row-gap: 50px;
+    }
+}
+
+.section-name {
+    color: #6a8387;
+    font-size: 22px;
+}
+
+.round-button {
+    width: 20px;
+    height: 20px;
+    font: 12px 'Nanum Gothic', sans-serif;
+    border: none;
+    border-radius: 50%;
+    background-color: #6f8088;
+    color: white;
+    outline: none;
+    padding: 0;
+}
+
+.round-button:hover {
+    background-color: #c9d4da;
+    color: #6a8387;
+    cursor: pointer;
+}
+
+/* ----------------------------------------------- */
+
+.default {
+    display: grid;
+    grid-template-columns: fit-content(100%) 1fr;
+    grid-row-gap: 15px;
+    grid-column-gap: 40px;
+    grid-template-areas:
+            "section-name update-geo"
+            "city-weather city-weather";
+}
+
+@media (min-width: 768px) {
+    .default {
+        grid-template-columns: 1fr 1fr 1fr;
+        grid-template-areas:
+                "section-name update-geo ."
+                "city-weather city-weather city-weather";
+    }
+}
+
+.default .section-name {
+    grid-area: section-name;
+    align-self: center;
+}
+
+.default__upd-geo-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    grid-area: update-geo;
+    align-self: center;
+    justify-self: end;
+    width: 40px;
+    height: 25px;
+    border: none;
+    border-radius: 5px;
+    outline: none;
+    background-color: #c9d4da;
+    padding: 3px 5px;
+}
+
+.default__upd-geo-btn:hover {
+    background-color: #6f8088;
+    color: white;
+    cursor: pointer;
+}
+
+.default__upd-geo-btn span {
+    display: none;
+    color: #6a8387;
+}
+
+.default__upd-geo-btn:hover span {
+    color: white;
+}
+
+.default__upd-geo-btn img {
+    width: 100%;
+    height: 100%;
+}
+
+.default__upd-geo-btn:hover .update-icon,
+.default__upd-geo-btn .update-icon_hover {
+    display: none;
+}
+
+.default__upd-geo-btn:hover .update-icon_hover {
+    display: inline;
+}
+
+@media (min-width: 425px) {
+    .default__upd-geo-btn {
+        width: fit-content;
+        height: fit-content;
+        padding: 10px 20px;
+    }
+
+    .default__upd-geo-btn span {
+        display: inline;
+    }
+
+    .default__upd-geo-btn .update-icon,
+    .default__upd-geo-btn:hover .update-icon_hover {
+        display: none;
+    }
+}
+
+@media (min-width: 768px) {
+    .default__upd-geo-btn {
+        justify-self: center;
+    }
+}
+
+.default .city-weather {
+    grid-area: city-weather;
+}
+
+.city-weather_default {
+    grid-row-gap: 15px;
+}
+
+@media (min-width: 768px) {
+    .city-weather_default {
+        grid-template-columns: 1fr 1fr;
+        grid-column-gap: 50px;
+    }
+}
+
+.city-weather_default .city-info {
+    grid-row-gap: 10px;
+    grid-template-areas:
+            "city-name city-name"
+            "weather-icon weather-temperature";
+}
+
+.city-weather_default .city-info__name {
+    grid-area: city-name;
+    font-size: 22px;
+}
+
+.city-weather_default .city-info__temperature {
+    grid-area: weather-temperature;
+    align-self: center;
+    font-size: 50px;
+}
+
+.city-weather_default .city-info__icon {
+    grid-area: weather-icon;
+    width: 100px;
+    height: 100px;
+}
+
+@media (min-width: 768px) {
+    .city-weather_default .city-info__name {
+        font-size: 25px;
+    }
+
+    .city-weather_default .city-info__temperature {
+        align-self: center;
+        font-size: 75px;
+    }
+
+    .city-weather_default .city-info__icon {
+        width: 120px;
+        height: 120px;
+    }
+}
+
+/* ----------------------------------------------- */
+
+.favorites {
+    display: grid;
+    grid-row-gap: 20px;
+}
+
+.favorites__header {
+    display: grid;
+    grid-row-gap: 20px;
+}
+
+@media (min-width: 768px) {
+    .favorites__header {
+        grid-template-columns: 1fr 1fr;
+        grid-column-gap: 50px;
+    }
+}
+
+.add-form {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-column-gap: 10px;
+}
+
+.add-form .round-button {
+    align-self: center;
+}
+
+.add-form__input {
+    border: none;
+    color: #6a8387;
+    background-color: #f1f1f1;
+    padding: 6px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.add-form__input:focus {
+    outline: none;
+}
+
+.add-form__input::placeholder {
+    color: #6a8387;
+}
+
+.add-form__input:focus::placeholder{
+    visibility: hidden;
+}
+
+.add-form__autocomplete {
+    position: relative;
+}
+
+.add-form__autocomplete-list {
+    position: absolute;
+    border: 1px solid #d4d4d4;
+    border-bottom: none;
+    border-top: none;
+    width: inherit;
+}
+
+.add-form__autocomplete-list .autocomplete-list__item {
+    padding: 3px 6px;
+    border-bottom: 1px solid #d4d4d4;
+    background-color: #fff;
+    cursor: pointer;
+}
+
+.add-form__autocomplete-list .autocomplete-list__item:hover {
+    background-color: #e9e9e9;
+}
+
+.autocomplete-active {
+    background-color: DodgerBlue !important;
+    color: #ffffff;
+}
+
+.favorites__items {
+    display: grid;
+    grid-gap: 25px;
+}
+
+@media (min-width: 768px) {
+    .favorites__items {
+        grid-template-columns: 1fr 1fr;
+        grid-column-gap: 50px;
+    }
+}
+
+/* ----------------------------------------------- */
+
+.city-weather {
+    display: grid;
+    font-family: 'Roboto', sans-serif;
+}
+
+.city-weather_action_remove {
+    grid-row-gap: 5px;
+    grid-template-columns: 2.5fr 1fr;
+    grid-template-areas:
+            "city-info remove-button"
+            "weather-info weather-info";
+}
+
+.city-weather_action_remove .city-info {
+    grid-area: city-info;
+}
+
+.city-weather_action_remove .round-button {
+    justify-self: end;
+    align-self: center;
+    grid-area: remove-button;
+}
+
+.city-weather_action_remove .weather-info {
+    grid-area: weather-info;
+}
+
+.city-info {
+    display: grid;
+    grid-template-columns: repeat(3, fit-content(100%));
+    grid-column-gap: 5px;
+}
+
+.city-info__name {
+    align-self: center;
+    color: #6f8088;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.city-info__temperature {
+    display: inline-flex;
+    align-self: center;
+    justify-self: end;
+    color: #7e7e7e;
+    font-size: 25px;
+    padding-left: 20px;
+}
+
+.city-info__icon {
+    display: inline-flex;
+    justify-self: start;
+    align-self: center;
+    width: 45px;
+    height: 45px;
+    padding-right: 15px;
+}
+
+.city-info__icon img {
+    width: 100%;
+    height: 100%;
+}
+
+.weather-info {
+    display: grid;
+    grid-template-rows: auto;
+    grid-row-gap: 5px;
+    color: white;
+}
+
+.weather-info__item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #a7afb0;
+    padding: 5px;
+}
+
+.weather-info__feature {
+    margin-right: 10px;
+    font-weight: bold;
+    color: #eef5f8;
+}
+
+.weather-info__value {
+    display: inline-flex;
+    text-align: end;
+    color: #e8edef;
+}
+
+/* ----------------------------------------------- */
+
+.default--spinner {
+    grid-area: city-weather;
+    justify-self: center;
+    width: 150px;
+    height: 150px;
+}
+
+.city-info__icon--spinner {
+    width: 100%;
+    height: 100%;
+}
+
+.city-info__temperature--spinner {
+    width: 25px;
+    height: 25px;
+}
+
+.weather-info__value--spinner {
+    width: 13px;
+    height: 13px;
+}
+
+.display-none {
+    display: none;
+}
