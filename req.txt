@@ -1,0 +1,2 @@
+- no more than 10 cities available
+- add get cities list json by request

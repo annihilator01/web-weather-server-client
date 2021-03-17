@@ -80,7 +80,7 @@ const beaufortScale = {
     '5.8 to 8.8': 'Moderate breeze',
     '8.9 to 11.1': 'Fresh breeze',
     '11.1 to Infinity': 'Strong breeze',
-}
+};
 function windSpeedToBeaufortScale(windSpeed) {
     for (const windSpeedRange in beaufortScale) {
         let windSpeedLow, windSpeedHigh;
@@ -108,7 +108,7 @@ const skyConditions = {
     '51 to 69': 'Mostly cloudy',
     '70 to 87': 'Considerable cloudiness',
     '88 to 100': 'Overcast'
-}
+};
 function cloudinessToCondition(cloudiness) {
     cloudiness = Math.round(cloudiness);
     for (const cloudinessRange in skyConditions) {
