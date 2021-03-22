@@ -26,9 +26,7 @@
             <div class="city-info">
                 <h3 class="city-info__name"></h3>
                 <span class="city-info__temperature"></span>
-                <div class="city-info__icon">
-                    <img src="" alt="">
-                </div>
+                <div class="city-info__icon"></div>
             </div>
             <ul class="weather-info">
                 <li class="weather-info__item">
@@ -60,11 +58,11 @@
         <div class="favorites__header">
             <h2 class="section-name">Favorites</h2>
             <form action="#" class="add-form">
-                <div class="add-from__autocomplete">
-                    <input placeholder="Add new city" class="add-form__input">
+                <div class="add-form__autocomplete">
+                    <input placeholder="Add new city" class="add-form__input" required>
                     <ul class="autocomplete-list add-form__autocomplete-list display-none"></ul>
                 </div>
-                <button class="add-form__submit-button round-button no-select">+</button>
+                <button type="submit" class="add-form__submit-button round-button no-select">+</button>
             </form>
         </div>
         <ul class="favorites__items">
@@ -109,6 +107,6 @@
 <script src="../js/utils.js"></script>
 <script src="../js/main.js"></script>
 <script src="../js/load.js"></script>
-<!--<script src="https://livejs.com/live.js"></script>-->
+<script src="https://livejs.com/live.js"></script>
 </body>
 </html>

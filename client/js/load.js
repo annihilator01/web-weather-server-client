@@ -1,46 +1,60 @@
+document.addEventListener('DOMContentLoaded', async () => {
+    fillFavoriteWithDataInit();
+    addFavoriteCityInit();
+    updateGeolocationInit();
+    autocompleteAddFormInit();
+    autocompleteInformationInit();
+    removeAllBubbleErrorsOnDocumentClickInit();
+});
+
+function fillFavoriteWithDataInit() {
+    fetch('/favorite')
+        .then(response => response.json())
+        .then(onLoadCities => {
+            for (const city of onLoadCities) {
+                addFavItem(city.name, true).then();
+            }
+        });
+}
+
+const addButton = document.querySelector('.add-form__submit-button');
+const addForm = document.querySelector('.add-form__autocomplete');
+function addFavoriteCityInit() {
+    addButton.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const city = addInput.value.trim();
+        if (!city) {
+            return;
+        }
+
+        addFavItem(city)
+            .then(() => {
+                addInput.value = '';
+                addInput.blur();
+            })
+            .catch(err => {
+                insertBubbleError(addForm, err);
+            });
+    });
+}
+
+const updateGeolocationButton = document.querySelector('.default__upd-geo-btn');
+function updateGeolocationInit() {
+    // connect update geolocation button with function
+    updateGeolocationButton.addEventListener('click', event => {
+        updateGeolocation();
+    });
+
+    // update geolocation on load
+    updateGeolocation();
+
+}
+
+
 const defaultCityCoords = {
     'lon': 37.615555,
     'lat': 55.75222
 };
-
-// fill data using local storage
-const citiesKey = 'cities'
-if (!localStorage.getItem(citiesKey)) {
-    localStorage.setItem(citiesKey, '[]');
-}
-const onLoadCities = JSON.parse(localStorage.getItem(citiesKey));
-for (const city of onLoadCities) {
-    addFavItem(city.id, city.name);
-}
-
-// prevent form from going to beginning of page after submitting
-const addButton = document.querySelector('.add-form__submit-button');
-addButton.addEventListener('click', event => {
-    event.preventDefault();
-
-    const lastTopCity = JSON.parse(localStorage.getItem(lastTopCityKey));
-    if (lastTopCity) {
-        const cities = JSON.parse(localStorage.getItem(citiesKey));
-        const alreadyExistCity = cities.filter(city => city.id === lastTopCity.id);
-        if (alreadyExistCity.length === 0) {
-            addInput.value = '';
-            addInput.blur();
-            addFavItem(lastTopCity.id, lastTopCity.name);
-            cities.push(lastTopCity);
-            localStorage.setItem(citiesKey, JSON.stringify(cities));
-        }
-    }
-});
-
-// connect update geolocation button with function
-const updateGeolocationButton = document.querySelector('.default__upd-geo-btn');
-updateGeolocationButton.addEventListener('click', event => {
-    updateGeolocation();
-});
-
-// update geolocation on load
-updateGeolocation();
-
 function updateGeolocation() {
     document.querySelector('.city-weather_default').classList.add('display-none');
     setSpinner([document.querySelector('.default')]);
@@ -61,32 +75,30 @@ function updateGeolocation() {
 }
 
 
-// set actions on input to add city form
 const addInput = document.querySelector('.add-form__input');
 const autocompleteList = document.querySelector('.add-form__autocomplete-list');
-const lastTopCityKey = 'lastTopCity';
-localStorage.setItem(lastTopCityKey, '');
-
 let focusElementIndex = -1;
-addInput.addEventListener('keydown', event => {
-    if (event.keyCode === 40) {
-        removeAutocompleteActive();
-        focusElementIndex++;
-        addAutocompleteActive();
-    } else if (event.keyCode === 38) {
-        removeAutocompleteActive();
-        focusElementIndex--;
-        addAutocompleteActive();
-    } else if (event.keyCode === 13) {
-        event.preventDefault();
-        if (focusElementIndex !== -1) {
-            autocompleteList.children[focusElementIndex].click();
-            focusElementIndex = -1;
-        } else if (localStorage.getItem(lastTopCityKey)) {
-            addButton.click();
+function autocompleteAddFormInit () {
+    addInput.addEventListener('keydown', event => {
+        if (event.keyCode === 40) {
+            removeAutocompleteActive();
+            focusElementIndex++;
+            addAutocompleteActive();
+        } else if (event.keyCode === 38) {
+            removeAutocompleteActive();
+            focusElementIndex--;
+            addAutocompleteActive();
+        } else if (event.keyCode === 13) {
+            event.preventDefault();
+            if (focusElementIndex !== -1) {
+                autocompleteList.children[focusElementIndex].click();
+                focusElementIndex = -1;
+            } else {
+                addButton.click();
+            }
         }
-    }
-});
+    });
+}
 
 function addAutocompleteActive() {
     if (focusElementIndex >= autocompleteList.children.length) {
@@ -103,52 +115,53 @@ function removeAutocompleteActive() {
     }
 }
 
-fetch('data/city_list.json')
-    .then(response => response.json())
-    .then(cities => {
-        addInput.addEventListener('input', event => {
-            const inputText = event.target.value;
-            removeAutocompleteItems();
-
-            if (inputText.length === 0) {
-                localStorage.setItem(lastTopCityKey, '');
-                return;
-            }
-
-            let matches = cities.filter(city => city.name.toLowerCase().startsWith(inputText.toLowerCase()));
-            const seen = new Set();
-            matches = matches.filter(city => {
-                const isDuplicateCity = seen.has(city.name);
-                seen.add(city.name);
-                return !isDuplicateCity;
-            }).slice(0, 10);
-
-            if (matches.length !== 0) {
-                autocompleteList.classList.remove('display-none');
-            }
-
-            for (const match of matches) {
-                console.log(match);
-                let autocompleteItem = getAutocompleteItem(match.name, match.country, inputText.length);
-                autocompleteItem.addEventListener('click', event => {
-                    addInput.value = `${match.name}`;
-                    if (match.country) {
-                        addInput.value += `, ${match.country}`;
-                    }
-
-                    const lastTopCity = {
-                        id: match.id,
-                        name: match.name,
-                    };
-
-                    localStorage.setItem(lastTopCityKey, JSON.stringify(lastTopCity));
-                    removeAutocompleteItems();
-                });
-                autocompleteList.appendChild(autocompleteItem);
-            }
-        })
+let cityList;
+function autocompleteInformationInit() {
+    document.addEventListener('click', event => {
+        removeAutocompleteItems();
     });
+
+    fetch('/citylist')
+        .then(response => response.json())
+        .then(cities => {
+            cityList = cities;
+            addInput.addEventListener('input', event => {
+                focusElementIndex = -1;
+                const inputText = event.target.value.trim();
+
+                removeAutocompleteItems();
+                removeBubbleErrors();
+
+                if (inputText.length === 0) {
+                    return;
+                }
+
+                let matches = cities.filter(
+                    city => city.toLowerCase().startsWith(inputText.toLowerCase())
+                ).slice(0, 10);
+
+                if (matches.length !== 0) {
+                    autocompleteList.classList.remove('display-none');
+                }
+
+                for (const match of matches) {
+                    let autocompleteItem = getAutocompleteItem(match, inputText.length);
+                    autocompleteItem.addEventListener('click', event => {
+                        addInput.value = `${match}`;
+                        removeAutocompleteItems();
+                    });
+                    autocompleteList.appendChild(autocompleteItem);
+                }
+            })
+        });
+}
 
 function removeAutocompleteItems() {
     autocompleteList.querySelectorAll('*').forEach(item => item.remove());
+}
+
+function removeAllBubbleErrorsOnDocumentClickInit() {
+    document.addEventListener('click', event => {
+        removeBubbleErrors();
+    });
 }

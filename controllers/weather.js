@@ -8,12 +8,20 @@ module.exports = ({router, actions}) => {
     routes.get('/city', async (req, res) => {
         const city = req.query.q;
 
-        const weatherByLocation = config.weatherByCityURL
-            .replace('$city', city)
+        const weatherByCity = encodeURI(config.weatherByCityURL.replace('$city', city));
 
-        axios.get(weatherByLocation)
+        if (city.includes(',')) {
+            res.status(403).send({
+                code: 403,
+                message: `Incorrect city name format`
+            });
+            return;
+        }
+
+        axios.get(weatherByCity)
             .then(response => {
                 const polishedWeatherData = weather.getPolishedWeatherData(response.data);
+                polishedWeatherData.code = 200;
                 res.send(polishedWeatherData);
             })
             .catch(err => res.status(404).send({

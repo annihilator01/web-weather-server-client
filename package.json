@@ -21,6 +21,7 @@
     "axios": "^0.21.1",
     "express": "^4.17.1",
     "require-all": "^3.0.0",
+    "sequelize": "^6.5.1",
     "sqlite3": "^5.0.2"
   },
   "devDependencies": {

@@ -1,79 +1,115 @@
-const openWeatherApiKey = '788a15215ef681200bb352db9f04f8c3';
 const defaultItem = document.querySelector('.default');
 const favItems = document.querySelector('.favorites__items');
-const addFormInput = document.querySelector('.add-form__input');
 
-function addFavItem(cityId, cityName) {
+async function addFavItem(cityName, isInit = false) {
     let favItem = document.querySelector('#favorites__item-template').content.cloneNode(true);
-    favItem.querySelector('.city-info__name').textContent = cityName;
     const removeButton = favItem.querySelector('.city-weather__remove-button');
-    removeButton.addEventListener('click', event => {
-        event.preventDefault();
-        let cities = JSON.parse(localStorage.getItem(citiesKey));
-        cities = cities.filter(city => city.id !== cityId);
-        localStorage.setItem(citiesKey, JSON.stringify(cities));
-        favItems.removeChild(favItem);
-    });
 
     const dataElements = Array.prototype.concat(
+        favItem.querySelector('.city-info__name'),
         favItem.querySelector('.city-info__icon'),
         favItem.querySelector('.city-info__temperature'),
         Array.from(favItem.querySelectorAll('.weather-info__value'))
     );
+
     setSpinner(dataElements);
     favItems.appendChild(favItem);
     favItem = favItems.lastElementChild;
 
-    fetch(`https://api.openweathermap.org/data/2.5/weather?id=${cityId}&appid=${openWeatherApiKey}`)
-        .then(response => response.json())
-        .then(data => {
-            const
-                weatherIcon = favItem.querySelector('.city-info__icon'),
-                temperatureVal = favItem.querySelector('.city-info__temperature'),
-                windVal = favItem.querySelector('.weather-info__wind'),
-                cloudinessVal = favItem.querySelector('.weather-info__cloudiness'),
-                pressureVal = favItem.querySelector('.weather-info__pressure'),
-                humidityVal = favItem.querySelector('.weather-info__humidity'),
-                coords = favItem.querySelector('.weather-info__coords');
+    const weatherData = await (await fetch(`/weather/city?q=${cityName}`)).json();
 
-            changeSpinnerOnDataNode(weatherIcon, imageNode(`https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`));
-            changeSpinnerOnDataNode(temperatureVal, textNode(`${Math.round(data.main.temp - 273.15)}°C`));
-            changeSpinnerOnDataNode(windVal, textNode(`${data.wind.speed} meter/sec, ${windSpeedToBeaufortScale(data.wind.speed)}, ${degToDirection(data.wind.deg)}`));
-            changeSpinnerOnDataNode(cloudinessVal, textNode(`${data.clouds.all}%, ${cloudinessToCondition(data.clouds.all)}`));
-            changeSpinnerOnDataNode(pressureVal, textNode(`${data.main.pressure} hPa`));
-            changeSpinnerOnDataNode(humidityVal, textNode(`${data.main.humidity}%`));
-            changeSpinnerOnDataNode(coords, textNode(`[${data.coord.lon}, ${data.coord.lat}]`));
-        });
+    switch (weatherData.code) {
+        case 200:
+            if (isInit) {
+                setRemoveFavoriteItemAction(removeButton, favItem, {payload: {name: weatherData.city}});
+                fillWeatherItemWithData(favItem, weatherData);
+                return;
+            }
+
+            const addPayload = {
+                payload: {
+                    name: weatherData.city
+                }
+            };
+
+            const dbResponse = await (await fetch(`/favorite`, {
+                method: 'POST',
+                body: JSON.stringify(addPayload),
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            })).json();
+
+            switch (dbResponse.code) {
+                case 200:
+                    setRemoveFavoriteItemAction(removeButton, favItem, {payload: {name: weatherData.city}});
+                    fillWeatherItemWithData(favItem, weatherData);
+                    break;
+
+                case 403:
+                    favItem.remove();
+                    throw dbResponse.message;
+            }
+            break;
+
+        case 403:
+        case 404:
+            favItem.remove();
+            throw weatherData.message;
+    }
 }
 
 function setWeatherHere(cityCoords) {
     const lon = cityCoords.lon;
     const lat = cityCoords.lat;
 
-    fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${openWeatherApiKey}`)
+    fetch(`/weather/coordinates?lat=${lat}&lon=${lon}`)
         .then(response => response.json())
         .then(data => {
-            const
-                weatherIcon = defaultItem.querySelector('.city-info__icon img'),
-                cityVal = defaultItem.querySelector('.city-info__name'),
-                temperatureVal = defaultItem.querySelector('.city-info__temperature'),
-                windVal = defaultItem.querySelector('.weather-info__wind'),
-                cloudinessVal = defaultItem.querySelector('.weather-info__cloudiness'),
-                pressureVal = defaultItem.querySelector('.weather-info__pressure'),
-                humidityVal = defaultItem.querySelector('.weather-info__humidity'),
-                coords = defaultItem.querySelector('.weather-info__coords');
-
-            weatherIcon.src = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
-            cityVal.textContent = data.name;
-            temperatureVal.innerHTML = `${Math.round(data.main.temp - 273.15)}&deg;C`;
-            windVal.textContent = `${data.wind.speed} meter/sec, ${windSpeedToBeaufortScale(data.wind.speed)}, ${degToDirection(data.wind.deg)}`;
-            cloudinessVal.textContent = `${data.clouds.all}%, ${cloudinessToCondition(data.clouds.all)}`;
-            pressureVal.textContent = `${data.main.pressure} hPa`;
-            humidityVal.textContent = `${data.main.humidity}%`;
-            coords.textContent = `[${data.coord.lon}, ${data.coord.lat}]`;
+            fillWeatherItemWithData(defaultItem, data);
 
             const cityWeatherElement = document.querySelector('.city-weather_default');
             removeSpinner(defaultItem);
             cityWeatherElement.classList.remove('display-none');
         });
+}
+
+function setRemoveFavoriteItemAction(button, deleteItem, deletePayload) {
+    button.addEventListener('click', event => {
+        event.preventDefault();
+
+        fetch(`/favorite`, {
+            method: 'DELETE',
+            body: JSON.stringify(deletePayload),
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => {
+                favItems.removeChild(deleteItem);
+            });
+    });
+}
+
+function fillWeatherItemWithData(item, data) {
+    const
+        cityName = item.querySelector('.city-info__name'),
+        weatherIcon = item.querySelector('.city-info__icon'),
+        temperatureVal = item.querySelector('.city-info__temperature'),
+        windVal = item.querySelector('.weather-info__wind'),
+        cloudinessVal = item.querySelector('.weather-info__cloudiness'),
+        pressureVal = item.querySelector('.weather-info__pressure'),
+        humidityVal = item.querySelector('.weather-info__humidity'),
+        coords = item.querySelector('.weather-info__coords');
+
+    changeSpinnerOnDataNode(cityName, textNode(data.city));
+    changeSpinnerOnDataNode(weatherIcon, imageNode(data.icon));
+    changeSpinnerOnDataNode(temperatureVal, textNode(`${Math.round(data.temp)}°C`));
+    changeSpinnerOnDataNode(windVal, textNode(`${data.wind.num} meter/sec, ${data.wind.text}, ${data.wind.dir}`));
+    changeSpinnerOnDataNode(cloudinessVal, textNode(`${data.clouds.num}%, ${data.clouds.text}`));
+    changeSpinnerOnDataNode(pressureVal, textNode(`${data.pressure} hPa`));
+    changeSpinnerOnDataNode(humidityVal, textNode(`${data.humidity}%`));
+    changeSpinnerOnDataNode(coords, textNode(`[${data.coords.lon}, ${data.coords.lat}]`));
 }

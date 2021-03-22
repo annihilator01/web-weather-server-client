@@ -1,0 +1,1 @@
+exports.filterDict = (dict, filterKeys) => Object.fromEntries(Object.entries(dict).filter(([k, v]) => filterKeys.includes(k)));
