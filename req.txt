@@ -1,3 +1,3 @@
 - animation of bubble error
 - spinner simplification
-- disconnection handle
+- beautify bad internet popup

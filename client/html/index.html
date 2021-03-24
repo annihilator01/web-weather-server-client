@@ -12,6 +12,17 @@
 </head>
 <body class="body">
 
+<div class="popup bad-internet display-none">
+    <div class="popup__content">
+        <div class="bad-internet__image">
+            <img src="../img/icons/bad_internet.svg" alt="Bad Internet">
+        </div>
+        <p>No Internet connection</p>
+        <p>Try to reload the page</p>
+        <button class="bad-internet__reload-button no-select">RELOAD</button>
+    </div>
+</div>
+
 <main class="main">
     <!--section with default city which name and temperature are displayed with large size-->
     <section class="default">
@@ -59,7 +70,7 @@
             <h2 class="section-name">Favorites</h2>
             <form action="#" class="add-form">
                 <div class="add-form__autocomplete">
-                    <input placeholder="Add new city" class="add-form__input" required>
+                    <input placeholder="Add new city" class="add-form__input" maxlength="100" required>
                     <ul class="autocomplete-list add-form__autocomplete-list display-none"></ul>
                 </div>
                 <button type="submit" class="add-form__submit-button round-button no-select">+</button>

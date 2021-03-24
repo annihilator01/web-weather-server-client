@@ -78,3 +78,19 @@ function removeBubbleError(target) {
         bubbleError.remove();
     }
 }
+
+async function fetchSafe(url, init={}) {
+    let data;
+    try {
+        data = await (await fetch(url, init)).json();
+    } catch (e) {
+        showBadInternetPopup();
+    }
+
+    return data;
+}
+
+function showBadInternetPopup() {
+    badInternetPopup.classList.remove('display-none');
+    document.querySelector('html').style.overflow = 'hidden';
+}

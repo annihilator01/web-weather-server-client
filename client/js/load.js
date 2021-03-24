@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', async () => {
+    popupBadInternetInit();
     fillFavoriteWithDataInit();
     addFavoriteCityInit();
     updateGeolocationInit();
@@ -7,6 +8,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     removeAllBubbleErrorsOnDocumentClickInit();
 });
 
+const badInternetPopup = document.querySelector('.bad-internet');
+const badInternetReloadButton = document.querySelector('.bad-internet__reload-button');
+function popupBadInternetInit() {
+    badInternetReloadButton.addEventListener('click', event => {
+        window.location.reload();
+    });
+}
+
 function fillFavoriteWithDataInit() {
     fetch('/favorite')
         .then(response => response.json())
@@ -14,6 +23,9 @@ function fillFavoriteWithDataInit() {
             for (const city of onLoadCities) {
                 addFavItem(city.name, true).then();
             }
+        })
+        .catch(err => {
+            showBadInternetPopup();
         });
 }
 

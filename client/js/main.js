@@ -16,7 +16,10 @@ async function addFavItem(cityName, isInit = false) {
     favItems.appendChild(favItem);
     favItem = favItems.lastElementChild;
 
-    const weatherData = await (await fetch(`/weather/city?q=${cityName}`)).json();
+    const weatherData = await fetchSafe(`/weather/city?q=${cityName}`);
+    if (!weatherData) {
+        return;
+    }
 
     switch (weatherData.code) {
         case 200:
@@ -32,14 +35,17 @@ async function addFavItem(cityName, isInit = false) {
                 }
             };
 
-            const dbResponse = await (await fetch(`/favorite`, {
-                method: 'POST',
-                body: JSON.stringify(addPayload),
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            })).json();
+            const dbResponse = await fetchSafe(`/favorite`, {
+                    method: 'POST',
+                    body: JSON.stringify(addPayload),
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                });
+            if (!dbResponse) {
+                return;
+            }
 
             switch (dbResponse.code) {
                 case 200:
@@ -72,6 +78,9 @@ function setWeatherHere(cityCoords) {
             const cityWeatherElement = document.querySelector('.city-weather_default');
             removeSpinner(defaultItem);
             cityWeatherElement.classList.remove('display-none');
+        })
+        .catch(err => {
+            showBadInternetPopup();
         });
 }
 
@@ -89,6 +98,9 @@ function setRemoveFavoriteItemAction(button, deleteItem, deletePayload) {
         })
             .then(response => {
                 favItems.removeChild(deleteItem);
+            })
+            .catch(err => {
+                showBadInternetPopup();
             });
     });
 }
