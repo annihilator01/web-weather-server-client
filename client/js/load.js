@@ -12,7 +12,7 @@ const badInternetPopup = document.querySelector('.bad-internet');
 const badInternetReloadButton = document.querySelector('.bad-internet__reload-button');
 function popupBadInternetInit() {
     badInternetReloadButton.addEventListener('click', event => {
-        window.location.reload(true);
+        window.location.reload();
     });
 }
 
