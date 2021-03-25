@@ -61,6 +61,26 @@
     cursor: pointer;
 }
 
+.text-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    border-radius: 5px;
+    outline: none;
+    background-color: #c9d4da;
+    color: #6a8387;
+    width: fit-content;
+    height: fit-content;
+    padding: 10px 20px;
+}
+
+.text-button:hover {
+    background-color: #6f8088;
+    color: white;
+    cursor: pointer;
+}
+
 .popup {
     z-index: 100;
     display: flex;
@@ -78,14 +98,17 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: mintcream;
+    background-color: white;
     padding: 15px;
-    border-radius: 10px;
+    border-radius: 5px;
+    box-shadow: 0 0 20px 5px rgba(255, 0, 0, 0.8);
 }
 
 .bad-internet__image {
-    width: 50px;
-    height: 50px;
+    width: min(20vw, 90px);
+    height: min(20vw, 90px);
+    max-width: 100px;
+    max-height: 100px;
 }
 
 .bad-internet__image img {
@@ -94,12 +117,15 @@
 }
 
 .bad-internet p {
-    font-size: 20px;
+    font-size: min(7vw, 30px);
     font-family: sans-serif;
+    font-weight: bold;
+    color: #6f8088;
 }
 
 .bad-internet__reload-button {
-
+    margin-top: 15px;
+    font-size: min(5vw, 20px);
 }
 
 /* ----------------------------------------------- */
@@ -129,30 +155,16 @@
 }
 
 .default__upd-geo-btn {
-    display: flex;
-    justify-content: center;
-    align-items: center;
     grid-area: update-geo;
     align-self: center;
     justify-self: end;
     width: 40px;
     height: 25px;
-    border: none;
-    border-radius: 5px;
-    outline: none;
-    background-color: #c9d4da;
     padding: 3px 5px;
-}
-
-.default__upd-geo-btn:hover {
-    background-color: #6f8088;
-    color: white;
-    cursor: pointer;
 }
 
 .default__upd-geo-btn span {
     display: none;
-    color: #6a8387;
 }
 
 .default__upd-geo-btn:hover span {

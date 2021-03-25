@@ -1,24 +1,15 @@
-const fs = require('fs');
-const path = require("path");
-
-module.exports = ({router}) => {
+module.exports = ({router, actions}) => {
     const routes = router();
+    const citylist = actions.citylist();
 
     routes.get('/', async (req, res) => {
-        const cityListPath = path.resolve(__dirname, '../data/city_list.json');
-        fs.readFile(cityListPath, 'utf8', (err, data) => {
-            if (err) throw err;
+        const prefix = req.query.prefix.trim();
 
-            const seen = new Set();
-            data = JSON.parse(data).map(city => city.name);
-            data = data.filter(city => {
-               const isDuplicateCity = seen.has(city);
-               seen.add(city);
-               return !isDuplicateCity;
-            });
-
-            res.send(data);
-        });
+        if (prefix) {
+            res.send(citylist.getCitiesStartWith(prefix));
+        } else {
+            res.send(citylist.getAllCities());
+        }
     });
 
     return routes;

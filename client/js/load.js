@@ -12,7 +12,7 @@ const badInternetPopup = document.querySelector('.bad-internet');
 const badInternetReloadButton = document.querySelector('.bad-internet__reload-button');
 function popupBadInternetInit() {
     badInternetReloadButton.addEventListener('click', event => {
-        window.location.reload();
+        window.location.reload(true);
     });
 }
 
@@ -133,25 +133,22 @@ function autocompleteInformationInit() {
         removeAutocompleteItems();
     });
 
-    fetch('/citylist')
-        .then(response => response.json())
-        .then(cities => {
-            cityList = cities;
-            addInput.addEventListener('input', event => {
-                focusElementIndex = -1;
-                const inputText = event.target.value.trim();
 
-                removeAutocompleteItems();
-                removeBubbleErrors();
+    addInput.addEventListener('input', event => {
+        focusElementIndex = -1;
+        const inputText = event.target.value.trim();
 
-                if (inputText.length === 0) {
-                    return;
-                }
+        removeAutocompleteItems();
+        removeBubbleErrors();
 
-                let matches = cities.filter(
-                    city => city.toLowerCase().startsWith(inputText.toLowerCase())
-                ).slice(0, 10);
+        if (inputText.length === 0) {
+            return;
+        }
 
+        fetch(`/citylist?prefix=${inputText}`)
+            .then(response => response.json())
+            .then(matches => {
+                console.log(matches);
                 if (matches.length !== 0) {
                     autocompleteList.classList.remove('display-none');
                 }
@@ -165,7 +162,8 @@ function autocompleteInformationInit() {
                     autocompleteList.appendChild(autocompleteItem);
                 }
             })
-        });
+            .then(err => {});
+    });
 }
 
 function removeAutocompleteItems() {

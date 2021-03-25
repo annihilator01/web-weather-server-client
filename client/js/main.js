@@ -18,6 +18,7 @@ async function addFavItem(cityName, isInit = false) {
 
     const weatherData = await fetchSafe(`/weather/city?q=${cityName}`);
     if (!weatherData) {
+        favItem.remove();
         return;
     }
 
@@ -44,6 +45,7 @@ async function addFavItem(cityName, isInit = false) {
                     }
                 });
             if (!dbResponse) {
+                favItem.remove();
                 return;
             }
 
