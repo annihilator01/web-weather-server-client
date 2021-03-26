@@ -1,3 +1,2 @@
 - animation of bubble error
 - spinner simplification
-- add button disabling when doing fetch request

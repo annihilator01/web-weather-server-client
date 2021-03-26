@@ -79,12 +79,14 @@ function removeBubbleError(target) {
     }
 }
 
-async function fetchSafe(url, init={}) {
+async function fetchSafe(url, init = {}, finalFunction = () => {}) {
     let data;
     try {
         data = await (await fetch(url, init)).json();
     } catch (e) {
         showBadInternetPopup();
+    } finally {
+        finalFunction();
     }
 
     return data;
@@ -93,4 +95,12 @@ async function fetchSafe(url, init={}) {
 function showBadInternetPopup() {
     badInternetPopup.classList.remove('display-none');
     document.querySelector('html').style.overflow = 'hidden';
+}
+
+function disableButton(button) {
+    button.disabled = true;
+}
+
+function enableButton(button) {
+    button.disabled = false;
 }

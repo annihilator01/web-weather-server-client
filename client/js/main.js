@@ -90,6 +90,7 @@ function setRemoveFavoriteItemAction(button, deleteItem, deletePayload) {
     button.addEventListener('click', event => {
         event.preventDefault();
 
+        disableButton(button);
         fetch(`/favorite`, {
             method: 'DELETE',
             body: JSON.stringify(deletePayload),
@@ -103,7 +104,8 @@ function setRemoveFavoriteItemAction(button, deleteItem, deletePayload) {
             })
             .catch(err => {
                 showBadInternetPopup();
-            });
+            })
+            .finally(() => enableButton(button));
     });
 }
 

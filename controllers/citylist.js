@@ -3,12 +3,18 @@ module.exports = ({router, actions}) => {
     const citylist = actions.citylist();
 
     routes.get('/', async (req, res) => {
-        const prefix = req.query.prefix.trim();
+        const prefix = req.query.prefix;
 
-        if (prefix) {
-            res.send(citylist.getCitiesStartWith(prefix));
-        } else {
-            res.send(citylist.getAllCities());
+        switch (prefix) {
+            case '':
+                res.send([]);
+                break;
+            case undefined:
+                res.send(citylist.getAllCities());
+                break;
+            default:
+                res.send(citylist.getCitiesStartWith(prefix.trim()));
+                break;
         }
     });
 

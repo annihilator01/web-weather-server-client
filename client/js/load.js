@@ -39,6 +39,7 @@ function addFavoriteCityInit() {
             return;
         }
 
+        disableButton(addButton);
         addFavItem(city)
             .then(() => {
                 addInput.value = '';
@@ -46,7 +47,8 @@ function addFavoriteCityInit() {
             })
             .catch(err => {
                 insertBubbleError(addForm, err);
-            });
+            })
+            .finally(() => enableButton(addButton));
     });
 }
 
@@ -115,9 +117,10 @@ function autocompleteAddFormInit () {
 function addAutocompleteActive() {
     if (focusElementIndex >= autocompleteList.children.length) {
         focusElementIndex = 0;
-    } else if (focusElementIndex === -1) {
+    } else if (focusElementIndex <= -1) {
         focusElementIndex = autocompleteList.children.length - 1;
     }
+
     autocompleteList.children[focusElementIndex].classList.add('autocomplete-active');
 }
 
@@ -127,28 +130,30 @@ function removeAutocompleteActive() {
     }
 }
 
-let cityList;
+let lastCityListController;
 function autocompleteInformationInit() {
     document.addEventListener('click', event => {
         removeAutocompleteItems();
     });
 
-
     addInput.addEventListener('input', event => {
-        focusElementIndex = -1;
-        const inputText = event.target.value.trim();
-
         removeAutocompleteItems();
         removeBubbleErrors();
 
-        if (inputText.length === 0) {
-            return;
+        const inputText = event.target.value;
+
+        const prevCityListController = lastCityListController;
+        const cityListController = lastCityListController = new AbortController();
+
+        if (prevCityListController) {
+            prevCityListController.abort();
         }
 
-        fetch(`/citylist?prefix=${inputText}`)
+        fetch(`/citylist?prefix=${inputText}`, {signal: cityListController.signal})
             .then(response => response.json())
             .then(matches => {
-                console.log(matches);
+                focusElementIndex = -1;
+
                 if (matches.length !== 0) {
                     autocompleteList.classList.remove('display-none');
                 }
