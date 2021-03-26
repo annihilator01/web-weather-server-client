@@ -1,17 +1,15 @@
-function getSpinnerIcon() {
-    const spinnerIcon = document.createElement('embed');
-    spinnerIcon.src = 'img/icons/animated/spinner.svg';
-    spinnerIcon.type = 'image/svg+xml';
-    spinnerIcon.classList.add('spinner');
-    return spinnerIcon;
+function getSpinner() {
+    const spinner = document.createElement('div');
+    spinner.classList.add('spinner');
+    return spinner;
 }
 
 function setSpinner(elements) {
     for (const element of elements) {
-        const spinnerIcon = getSpinnerIcon();
+        const spinner = getSpinner();
         const spinnerBaseClass = element.classList[0];
-        spinnerIcon.classList.add(`${spinnerBaseClass}--spinner`);
-        element.appendChild(spinnerIcon);
+        spinner.classList.add(`${spinnerBaseClass}--spinner`);
+        element.insertAdjacentElement('afterbegin', spinner);
     }
 }
 

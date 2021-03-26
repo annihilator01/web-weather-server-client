@@ -5,10 +5,10 @@ async function addFavItem(cityName, isInit = false) {
     let favItem = document.querySelector('#favorites__item-template').content.cloneNode(true);
     const removeButton = favItem.querySelector('.city-weather__remove-button');
 
+    favItem.querySelector('.city-info').classList.add('display-none');
+
     const dataElements = Array.prototype.concat(
-        favItem.querySelector('.city-info__name'),
-        favItem.querySelector('.city-info__icon'),
-        favItem.querySelector('.city-info__temperature'),
+        favItem.querySelector('.city-weather'),
         Array.from(favItem.querySelectorAll('.weather-info__value'))
     );
 
@@ -128,4 +128,7 @@ function fillWeatherItemWithData(item, data) {
     changeSpinnerOnDataNode(pressureVal, textNode(`${data.pressure} hPa`));
     changeSpinnerOnDataNode(humidityVal, textNode(`${data.humidity}%`));
     changeSpinnerOnDataNode(coords, textNode(`[${data.coords.lon}, ${data.coords.lat}]`));
+
+    item.querySelector('.city-info').classList.remove('display-none');
+    removeSpinner(item.querySelector('.city-weather'));
 }

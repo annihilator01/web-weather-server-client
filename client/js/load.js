@@ -48,7 +48,10 @@ function addFavoriteCityInit() {
             .catch(err => {
                 insertBubbleError(addForm, err);
             })
-            .finally(() => enableButton(addButton));
+            .finally(() => {
+                removeAutocompleteItems();
+                enableButton(addButton)
+            });
     });
 }
 

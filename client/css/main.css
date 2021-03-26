@@ -451,31 +451,40 @@
 
 /* ----------------------------------------------- */
 
+.spinner {
+    box-sizing: border-box;
+    border-radius: 50%;
+    border: 0.15em solid #dedede;
+    border-top: 0.15em solid #ed6e4d;
+    animation: spinner 0.7s linear infinite;
+}
+
+@keyframes spinner {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
 .default--spinner {
     grid-area: city-weather;
     justify-self: center;
-    width: 150px;
-    height: 150px;
+    width: 155px;
+    height: 155px;
+    font-size: 100px;
 }
 
-.city-info__name--spinner {
-    width: 20px;
-    height: 20px;
-}
-
-.city-info__icon--spinner {
-    width: 100%;
-    height: 100%;
-}
-
-.city-info__temperature--spinner {
+.city-weather--spinner {
     width: 25px;
     height: 25px;
+    font-size: 30px;
+    margin: 10px 0;
 }
 
 .weather-info__value--spinner {
     width: 13px;
     height: 13px;
+    font-size: 13px;
+    border-top-color: black;
 }
 
 .display-none {
@@ -483,7 +492,7 @@
 }
 
 .bubble-error {
-    background: rgba(255, 0, 0, 0.6);
+    background: rgba(255, 0, 0, 0.8);
     padding: 5px;
     border-radius: 5px;
     position: absolute;
@@ -495,6 +504,12 @@
     top: 125%;
     word-wrap: break-word;
     box-sizing: border-box;
+    animation: fadeIn linear 1s;
+}
+
+@keyframes fadeIn {
+    0% { opacity:0; }
+    100% { opacity:1; }
 }
 
 .bubble-error_top::after {
@@ -504,7 +519,7 @@
 }
 
 .bubble-error_top::after {
-    border-color: rgba(255, 0, 0, 0.6) transparent;
+    border-color: rgba(255, 0, 0, 0.8) transparent;
     border-width: 0 8px 5px 8px;
     left: 50%;
     transform: translateX(-50%);

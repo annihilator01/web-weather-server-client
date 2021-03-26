@@ -1,2 +1,0 @@
-- animation of bubble error
-- spinner simplification
